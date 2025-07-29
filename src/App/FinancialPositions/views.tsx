@@ -17,7 +17,7 @@ function getLedColorByPerc(perc: number): string {
   if (perc < 1) {
     return 'green';
   }
-  if (perc < 30) {
+  if (perc < 40) {
     return 'blue';
   }
   return 'red';
