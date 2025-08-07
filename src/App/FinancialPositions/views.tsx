@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Heading, Led, MessageBox, Spinner, DataList, Button } from 'outdated-components';
 import withMount from 'hocs';
+import Decimal from 'decimal.js';
 import { FinancialPosition } from './types';
 import './FinancialPositions.css';
 import FinancialPositionUpdate from './FinancialPositionUpdate';
@@ -23,6 +24,10 @@ function getLedColorByPerc(perc: number): string {
   return 'red';
 }
 
+function roundToTwo(num: number): number {
+  return new Decimal(num).toDecimalPlaces(2, Decimal.ROUND_HALF_UP).toNumber();
+}
+
 interface PercProps {
   perc: number;
 }
@@ -30,7 +35,7 @@ interface PercProps {
 const Perc: FC<PercProps> = ({ perc }) => (
   <>
     <Led colorName={getLedColorByPerc(perc)} />
-    <span>{perc}%</span>
+    <span>{perc.toFixed(2)}%</span>
   </>
 );
 
@@ -63,7 +68,10 @@ const FinancialPositions: FC<FinancialPositionsProps> = ({
         if (!item || !item.positionAccount || !item.positionAccount.value || !item.ndc) {
           return '-';
         }
-        return <Perc perc={Math.floor(100 * (item.positionAccount.value / item.ndc))} />;
+        const ratio = item.positionAccount.value / item.ndc;
+        const raw = ratio * 100;
+        const perc = roundToTwo(raw);
+        return <Perc perc={perc} />;
       },
     },
     {
