@@ -1,3 +1,5 @@
+import { store } from 'store';
+import { getUserEmail } from 'App/selectors';
 import { strict as assert } from 'assert';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, call, put, select, takeLatest, takeEvery } from 'redux-saga/effects';
@@ -155,6 +157,8 @@ function* updateFinancialPositionsParticipant() {
   // @ts-ignore
   const updateAction = yield select(getSelectedFinancialPositionUpdateAction);
 
+  const userEmail = getUserEmail(store.getState());
+
   switch (updateAction) {
     case FinancialPositionsUpdateAction.ChangeNetDebitCap: {
       // @ts-ignore
@@ -195,7 +199,15 @@ function* updateFinancialPositionsParticipant() {
       const args = {
         body: {
           transferId: uuid(),
-          externalReference: ' ',
+          externalReference: FinancialPositionsUpdateAction.AddFunds,
+          extensionList: {
+            extension: [
+              {
+                key: 'user',
+                value: userEmail,
+              },
+            ],
+          },
           action: 'recordFundsIn',
           reason: 'Admin portal funds in request',
           amount: {
@@ -225,7 +237,15 @@ function* updateFinancialPositionsParticipant() {
       const args = {
         body: {
           transferId: uuid(),
-          externalReference: ' ',
+          externalReference: FinancialPositionsUpdateAction.WithdrawFunds,
+          extensionList: {
+            extension: [
+              {
+                key: 'user',
+                value: userEmail,
+              },
+            ],
+          },
           action: 'recordFundsOutPrepareReserve',
           reason: 'Admin portal funds out request',
           amount: {

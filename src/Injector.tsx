@@ -8,11 +8,15 @@ import { actions } from './App/Config';
 interface ExportAppProps {
   authConfig?: AuthConfig;
   pubSub: PubSub;
+  userEmail?: string;
 }
 
-export default function ExportApp({ authConfig, pubSub }: ExportAppProps) {
+export default function ExportApp({ authConfig, pubSub, userEmail }: ExportAppProps) {
   if (authConfig) {
     store.dispatch(actions.setConfig(authConfig));
+  }
+  if (userEmail) {
+    store.dispatch(actions.setUserEmail(userEmail));
   }
 
   const unsubChannelA0 = pubSub.subscribe('channel-A', () => {
